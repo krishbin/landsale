@@ -1,0 +1,64 @@
+{% extends "feed/common.html" %}
+{% block main %}
+<div class="row">
+    <h1>{{ verification_status }} Posts</h1>
+    <span>
+      <a href="{% url 'user-land-verified' %}"><button type="button" class="btn btn-primary">Verified</button></a>
+      <a href="{% url 'user-land-unverified' %}"><button type="button" class="btn btn-secondary">Not Verified</button></a>
+    </span>
+</div>
+<div class="row justify-content-center">
+{% for land in lands %}
+  <div class="card m-1" style="width: 21rem;">
+    <img class="card-img-top" src="{{ land.land_image.url }}" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">{{ land.location }}</h5>
+      <a href="{% url 'detail-land' land.id %}" class="stretched-link"></a>
+      <p class="card-text">{{ land.info|truncatechars:40 }}</p>
+      <p style="text-align:left;">
+      {{ land.area }} {{ land.area_unit }}
+      <span style="float:right;">
+      ${{ land.price }}
+      </span>
+      </p>
+      <p style="text-align:left;margin-bottom:0;">
+      Posted By: {{ land.owner.first_name }} {{ land.owner.last_name }}
+      <span style="float:right;">
+      <img class="rounded-circle account-img" height="40px" src="{{ land.owner.profile_picture.url }}">
+      </span>
+      </p>
+      <p class="card-text" style="margin : 0; padding-top:0;">Contact No: {{ land.owner.phone_number }}</p>
+      <p class="card-footer text-muted">Posted On: {{ land.date_posted }}</p>
+    </div>
+  </div>
+{% endfor %}
+</div>
+<a href="{% url 'create-land' %}" class="float bg-dark" style="text-decoration:none;">
+New Post
+<i class="fa fa-plus my-float"></i>
+</a>
+
+<nav aria-label="feed paginator">
+{% if lands.has_other_pages %}
+  <ul class="pagination justify-content-center">
+    {% if lands.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ lands.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="page-item disabled" aria-disable="true"><a class="page-link" href="#">&laquo;</a></li>
+    {% endif %}
+    {% for i in lands.paginator.page_range %}
+      {% if lands.number == i %}
+        <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if lands.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ lands.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="page-item disabled" aria-disable="true"><a class="page-link" href="#">&raquo;</a></li>
+    {% endif %}
+  </ul>
+{% endif %}
+</nav>
+{% endblock main %}

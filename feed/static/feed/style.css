@@ -1,0 +1,81 @@
+#map { height: 600px; }
+
+body{
+	font-family:Verdana, sans-serif;
+	font-size:15px;
+}
+
+.float{
+	position:fixed;
+	width:160px;
+	height:60px;
+	bottom:40px;
+	right:40px;
+	background-color:#0C9;
+	color:#FFF;
+	border-radius:50px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
+
+.my-float{
+	margin-top:22px;
+}
+
+.card{
+	background-color: #c2c1c9;
+}
+
+.pagination > li > a
+{
+    background-color: white;
+    color: #212529;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #5a5a5a;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #212529 !Important;
+    border: solid 1px #212529 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #212529 !Important;
+    border: solid 1px #212529;
+}
+#id_converted_unit_tooltip{
+	position: relative;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+#id_converted_unit_list{
+	position: absolute;
+	left: 80%;
+	transform: translateX(-50%);
+	background-color: #212529;
+	color: white;
+	white-space: nowrap;
+	padding:10px 15px;
+	border-radius: 7px;
+	visibility:hidden;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+}
+
+#id_converted_unit_tooltip:hover #id_converted_unit_list{
+	top:-200%;
+	visibility:visible;
+	opacity: 1;
+}

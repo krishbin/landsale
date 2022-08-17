@@ -1,0 +1,94 @@
+{% extends 'feed/common.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block main %}
+<div class="container d-flex row">
+    <div class="container col-md-5 col">
+        <div class="mb-3">
+            <p class="h4 mb-4">Create a new Post</p>
+            <form method = "POST" class="form-signin" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class = "form-group">
+                {{ form|crispy }}
+                </fieldset>
+                <p>If you are posting a house please include all the details about the house before submitting.</p>
+                <button class = "btn btn-outline-info" type="submit">Post</button>
+            </form>
+        </div>
+    </div>
+    <div class="container col-md-5 col">
+    <div class="mt-5 mb-5">
+        <h5>Area Converter</h5>
+        <div class="row">
+            <div class="col">
+            <input type="text" class="form-control" placeholder="Input Area" onChange="updateOutputValue();" id="id_area_source">
+            </div>
+            =
+            <div class="col">
+            <input type="text" class="form-control" placeholder="Output Area" id="id_area_dest">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select name="area_unit_source" class="select form-select" id="id_area_unit_source" onChange="updateOutputValue()">
+                <option value="BG">Bigha</option>
+                <option value="KT">Kattha</option>
+                <option value="RO">Ropani</option>
+                <option value="AN" selected>Aana</option>
+                <option value="SF">SquareFeet</option>
+                <option value="SM">SquareMile</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <select name="area_unit_dest" class="select form-select" id="id_area_unit_dest" onChange="updateOutputValue()">
+                <option value="BG">Bigha</option>
+                <option value="KT">Kattha</option>
+                <option value="RO">Ropani</option>
+                <option value="AN">Aana</option>
+                <option value="SF" selected>SquareFeet</option>
+                <option value="SM">SquareMile</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <h5>Select the location of the place in the map.</h5>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([27.727, 85.378], 13);
+
+        var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            maxZoom: 18,
+            attribution: '{{ data.Location }}',
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+        }).addTo(map);
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            document.getElementById("id_longitude").value = e.latlng.lat;
+            document.getElementById("id_latitude").value = e.latlng.lng;
+            popup
+                .setLatLng(e.latlng)
+                .setContent(e.latlng.toString())
+                .openOn(map);
+        }
+        map.on('click', onMapClick);
+
+        function updateOutputValue(){
+            inp = document.getElementById("id_area_source").value;
+            in_u = document.getElementById("id_area_unit_source").value;
+            out_u = document.getElementById("id_area_unit_dest").value;
+            if(in_u === out_u){
+                document.getElementById("id_area_dest").value = inp;
+            }
+            else{
+                document.getElementById("id_area_dest").value = areaconvert(inp,in_u,out_u);
+            }
+        }
+    </script>
+    </div>
+</div>
+{% endblock main %}

@@ -1,0 +1,87 @@
+{% extends "feed/common.html" %}
+{% block main %}
+<div class="container d-flex row">
+    <div class="container col-md-3 col">
+        <div class="mb-3">
+            <div class="card" style="width: 27rem;">
+            <img class="card-img-top" src="{{ object.land_image.url }}" alt="Card image cap">
+            <div class="card-body">
+                <div class="card-title d-flex justify-content-between">
+                        <h4 class="card-title">{{ object.location }}</h4>
+                        {% if request.user.is_authenticated %}
+                            {% if in_wishlist %}
+                                <a href="{% url 'users-to-wishlist' object.id %}" class="btn btn-secondary">Remove from Wishlist</a>
+                            {% else %}
+                                <a href="{% url 'users-to-wishlist' object.id %}" class="btn btn-secondary">Add to Wishlist</a>
+                            {% endif %}
+                        {% endif %}
+                </div>
+                <p class="card-text">{{ object.info }}</p>
+                <div class="row">
+                    <div class="col" style="float:left;" id="id_converted_unit_tooltip">
+                        <div id="id_converted_unit_list"></div>
+                        <a href="{% url 'create-land' %}" style="text-decoration:none;color:black">{{ object.area }} {{ object.area_unit }}</a>
+                    </div>
+                    <div class="col" style="float:right;text-align:right;font-weight:bold">
+                        <span>${{ object.price }}</span>
+                    </div>
+                </div>
+                <p style="text-align:left;margin-bottom:0;">
+                Posted By: {{ object.owner.first_name }} {{ object.owner.last_name }}
+                <span style="float:right;">
+                <img class="rounded-circle account-img" height="40px" src="{{ object.owner.profile_picture.url }}">
+                </span>
+                </p>
+                <p class="card-text" style="margin : 0; padding-top:0;">Contact No: {{ object.owner.phone_number }}</p>
+                {% if object.is_house_or_apartment %}
+                    <div class="mt-3" style="text-align:center;font-weight:bold">
+                        <span>House Details</span>
+                    </div>
+                    <p class="card-text" style="margin : 0; padding-top:0;">No of Rooms: {{ object.total_no_of_rooms }}</p>
+                    <p class="card-text" style="margin : 0; padding-top:0;">No of Bedrooms: {{ object.no_of_bedroom }}</p>
+                    <p class="card-text" style="margin : 0; padding-top:0;">No of Washroom: {{ object.no_of_washroom }}</p>
+                    <img class="card-img-top mt-3 mb-3" src="{{ object.house_image.url }}" alt="Card image cap">
+                {% endif %}
+                <p class="card-footer text-muted">Posted On: {{ object.date_posted }}</p>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="container col-md-5 col">
+    <div id="map"></div>
+    {% if object.owner == user %}
+    <div class="container p-5 text-center align-bottom">
+    <a href="{% url 'update-land' object.id %}" style="text-decoration:none"><button type="button" class="btn btn-outline-dark btn-lg">Update</button></a>
+    <a href="{% url 'delete-land' object.id %}" style="text-decoration:none"><button type="button" class="btn btn-outline-danger btn-lg">Delete</button></a>
+    </div>
+    {% endif %}
+    <script>
+        var map = L.map('map').setView([{{ object.longitude }}, {{ object.latitude }}], 13);
+
+        var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            maxZoom: 18,
+            attribution: '{{ data.Location }}',
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+        }).addTo(map);
+        var marker = L.marker([{{ object.longitude }}, {{ object.latitude }}]).addTo(map);
+
+        function convert_listed_unit(){
+            const conversion_units = ['AN','KT','RO','BG','SM','SF'];
+            const converted = new Map();
+            conversion_units.map( data =>
+                converted.set(data,areaconvert({{object.area}},'{{object.area_unit}}',data))
+            )
+            const converted_array = [...converted.entries()];
+            return converted_array.map(data =>
+                                        `<div>${data[0]}: ${data[1]}</div>`
+                                        ).join('')
+        }
+        document.getElementById("id_converted_unit_list").innerHTML = convert_listed_unit();
+    </script>
+    </div>
+</div>
+{% endblock main %}
+

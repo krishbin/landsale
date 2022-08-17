@@ -1,0 +1,18 @@
+{% extends 'feed/common.html' %}
+{% block main %}
+<div class="container d-flex">
+    <div class="container col-md-7">
+        <div class="mb-3">
+            <h2>Delete Data</h2>
+            <h4>Confirm Delete Post for Land at {{ object.location }}?</h4>
+            <form method = "POST" class="form-signin" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class = "form-group">
+                </fieldset>
+                <button class = "btn btn-outline-danger" type="submit">Confirm</button>
+                <a class = "btn btn-outline-secondary" href="{% url 'detail-land' object.id %}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main %}
