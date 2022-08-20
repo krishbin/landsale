@@ -18,6 +18,10 @@ from django.urls import include,path
 from django.conf import settings
 from django.conf.urls.static import static
 
+admin.site.site_header = "LandSale Admin"
+admin.site.site_title = "LandSale Admin Portal"
+admin.site.index_title = "Welcome to LandSale Portal"
+
 urlpatterns = [
     path('', include('feed.urls')),
     path('', include('users.urls')),

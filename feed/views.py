@@ -6,7 +6,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .models import Land
+from .models import Comments,Land
+from .forms import NewCommentForm
 import random
 
 def index(request):
@@ -25,6 +26,7 @@ def index(request):
     return render(request, 'feed/feed.html',context)
 
 def search(request):
+    land_list = None
     if request.method == 'GET':
         q_l = request.GET.get("q")
         q_a = request.GET.get("qa")
@@ -251,12 +253,24 @@ class detail_land(DetailView):
     model = Land
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        comments_connected = Comments.objects.filter(land=self.get_object()).order_by('-date_posted')
+        context['comments'] = comments_connected
         if self.request.user:
             if self.object.wishlist.filter(id=self.request.user.id).exists():
                 context['in_wishlist'] = True
                 return context
+        if self.request.user.is_authenticated:
+            context['comment_form'] = NewCommentForm(instance=self.request.user) 
         context['in_wishlist'] = False
         return context
+    
+    def post(self,request, *args, **kwargs):
+        new_comment = Comments(content=request.POST.get('content'),
+                            user=self.request.user,
+                            land=self.get_object())
+        new_comment.save()
+        return self.get(self,request,*args, **kwargs)
+
 
 class delete_land(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model = Land

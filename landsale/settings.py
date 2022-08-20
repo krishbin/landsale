@@ -79,17 +79,27 @@ WSGI_APPLICATION = 'landsale.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+# 		'NAME': 'landsale',
+#         'USER': 'landsale',
+#         'PASSWORD': 'landsale',
+#         'HOST': '0.0.0.0',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'landsale',
-        'USER': 'landsale',
-        'PASSWORD': 'landsale',
-        'HOST': '0.0.0.0',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres_db',
+        'USER': 'admin',
+        'PASSWORD': 'ecole',
+        'HOST': '127.0.0.1',
+        'PORT': '54320',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

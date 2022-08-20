@@ -1,7 +1,6 @@
 from django.db import models
 from users.models import CustomUser
 from django.urls import reverse
-from django.shortcuts import redirect
 from django.core.validators import MinValueValidator,MaxValueValidator,EMPTY_VALUES
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -63,5 +62,18 @@ class Land(models.Model):
     def get_absolute_url(self):
         return reverse('detail-land',kwargs={'pk':self.pk})
 
+    @property
+    def no_of_comments(self):
+        return Comments.objects.filter(land=self).count()
+
     class Meta:
         ordering = ['-date_posted']
+
+class Comments(models.Model):
+    user = models.ForeignKey(CustomUser, models.RESTRICT)
+    land = models.ForeignKey(Land, models.CASCADE)
+    content = models.CharField(max_length=255)
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.user) + ', ' + self.land.location

@@ -1,5 +1,7 @@
 {% extends "feed/common.html" %}
+{% load crispy_forms_tags %}
 {% block main %}
+<div>
 <div class="container d-flex row">
     <div class="container col-md-3 col">
         <div class="mb-3">
@@ -55,6 +57,47 @@
     <a href="{% url 'delete-land' object.id %}" style="text-decoration:none"><button type="button" class="btn btn-outline-danger btn-lg">Delete</button></a>
     </div>
     {% endif %}
+</div>
+
+        <!-- COMMENTS  -->
+    <h3>Comment Section</h3>
+    <div id="comments_section">
+
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+        {{ comment_form|crispy }}
+        <button class="btn btn-info" type="submit">Add comment <i class="fas fa-comments"></i></button>
+        </div>
+    </form>
+    {% else %}
+    <a class="btn btn-outline-info" href="{% url 'users-login' %}?next={{request.path}}">Log in to add a comment!</a><br>
+    {% endif %}
+
+    {% if comments %}
+    <strong class="text-secondary">{{ object.number_of_comments }} Comment{{ object.no_of_comments|pluralize }}</strong>
+    <hr>
+    <ul>
+        {% for comment in comments %}
+        <li>           
+        <div>
+            <span>
+            <strong class="text-info">{{ comment.user }} </strong>
+            <small class="text-muted">{{ comment.date_posted }}</small>
+            </span>
+            <p>
+            {{ comment.content|safe }}
+            </p>
+        </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <strong class="text-secondary">No comments yet...</strong>
+    {% endif %}
+
+</div>
     <script>
         var map = L.map('map').setView([{{ object.longitude }}, {{ object.latitude }}], 13);
 
